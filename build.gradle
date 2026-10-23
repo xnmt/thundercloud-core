@@ -1,0 +1,27 @@
+plugins { id 'java'; id 'net.minecraftforge.gradle' version '[6.0,6.2)' }
+// 版本号全部来自 gradle.properties，改版本只动那个文件
+version = project.modVersion
+group = project.modGroup
+base { archivesName = project.modId }
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+minecraft { mappings channel: 'official', version: project.minecraftVersion }
+// 编译容器固定提供 forgeBuildVersion；玩家侧最低兼容版本是 forgeVersion
+dependencies { minecraft "net.minecraftforge:forge:${project.minecraftVersion}-${project.forgeBuildVersion}" }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+processResources {
+    def props = [mod_id: project.modId, mod_name: project.modName, mod_version: project.version,
+                 minecraft_version: project.minecraftVersion, forge_version: project.forgeVersion]
+    inputs.properties props
+    filteringCharset = 'UTF-8'
+    filesMatching('META-INF/mods.toml') { expand props }
+}
+jar.finalizedBy('reobfJar')
+
+// 无需启动游戏的数学/配置回归；随正式构建一起运行。
+tasks.register('vortexRegressionTest', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'cn.blockforge.generated.thundercloud.config.VortexRegressionTest'
+    workingDir = projectDir
+}
+check.dependsOn tasks.named('vortexRegressionTest')
