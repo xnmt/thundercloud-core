@@ -1,0 +1,29 @@
+# Gradle
+.gradle/
+build/
+out/
+bin/
+
+# 运行目录与日志
+run/
+logs/
+crash-reports/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 本地依赖（第三方 jar 不要提交）
+libs/
+*.class
+__pycache__/
